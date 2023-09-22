@@ -35,35 +35,29 @@ def completionPrompt2():
     
     {if <meals> includes 'breakfast' then #### Breakfast
     
-    ##### Recipe: <breakfast recipe> - <number_of_servings> servings
+    ##### Recipe: [<breakfast recipe name>](allrecipes_url) - <number_of_servings> servings
     - list
     - of 
     - ingredients
-    
-    [Link to Recipe](allrecipes_url)
     
     ---}
     
     {if <meals> includes 'lunch' then #### Lunch
     
-    ##### Recipe: <lunch recipe> - <number_of_servings> servings
+    ##### Recipe: [<lunch recipe name>](allrecipes_url) - <number_of_servings> servings
     - list
     - of 
     - ingredients
-    
-    [Link to Recipe](allrecipes_url)
-    
+        
     ---}
 
     {if <meals> includes 'dinner' then #### Dinner
     
-    ##### Recipe: <dinner recipe> - <number_of_servings> servings
+    ##### Recipe: [<dinner recipe name>](allrecipes_url) - <number_of_servings> servings
     - list
     - of 
     - ingredients
-    
-    [Link to Recipe](allrecipes_url)
-    
+        
     ---}
     
     

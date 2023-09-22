@@ -9,6 +9,8 @@ decouple = "*"
 flask = "*"
 flask-cors = "*"
 load-dotenv = "*"
+pyjwt = "*"
+requests = "*"
 
 [requires]
 python_version = "3.9"
