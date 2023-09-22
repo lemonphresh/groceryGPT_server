@@ -1,5 +1,4 @@
 import openai
-import jwt
 import requests
 import os
 from dotenv import load_dotenv
@@ -11,7 +10,7 @@ load_dotenv()
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 jwt_secret = os.getenv("JWT")
-database_url = os.getenv("DATABASE_URL")
+graphql_url = os.getenv("GRAPHQL_URL")
 
 import sys
 
@@ -21,10 +20,162 @@ print(sys.executable)
 app = Flask(__name__)
 CORS(app)
 
-
 @app.route("/")
 def index():
     return "Hello, World!"
+
+@app.route("/update-recipe-name", methods=["POST"])
+def update_recipe_name():
+    if not request.json: 
+        abort(400)
+    
+    query = """
+        mutation UpdateRecipeName($name: String, $recipeId: ID!, $userId: ID!) {
+            updateRecipeNameInput(name: $name, recipeId: $recipeId, userId: $userId) {
+                id
+                name
+                link
+            }
+        }
+    """
+
+    data = { "query": query, "variables": request.json }
+    headers = {"Content-Type": "application/json"}
+
+    r = requests.post(graphql_url
+                      , json=data, headers=headers)
+
+    if not r.json()['data']['updateRecipeName'] and r.json()['data']['updateRecipeName'] != []:
+        return jsonify({ 'errors':  r.json()['errors'] })
+    
+    return r.json()['data']['updateRecipeName']
+
+@app.route("/create-recipe", methods=["POST"])
+def create_recipe():
+    if not request.json: 
+        abort(400)
+    
+    query = """
+        mutation CreateRecipe($createRecipeInput: CreateRecipeInput) {
+            createRecipe(createRecipeInput: $createRecipeInput) {
+                id
+                name
+                link
+            }
+        }
+    """
+
+    data = { "query": query, "variables": { "createRecipeInput": request.json } }
+    headers = {"Content-Type": "application/json"}
+
+    r = requests.post(graphql_url
+                      , json=data, headers=headers)
+
+    if not r.json()['data']['createRecipe'] and r.json()['data']['createRecipe'] != []:
+        return jsonify({ 'errors':  r.json()['errors'] })
+    
+    return r.json()['data']['createRecipe']
+
+@app.route("/delete-recipe", methods=["POST"])
+def delete_recipe():
+    if not request.json: 
+        abort(400)
+    
+    query = """
+        mutation DeleteRecipe($deleteRecipeInput: DeleteRecipeInput) {
+            deleteRecipe(deleteRecipeInput: $deleteRecipeInput)
+        }
+    """
+
+    data = { "query": query, "variables": { "deleteRecipeInput": request.json } }
+    headers = {"Content-Type": "application/json"}
+
+    r = requests.post(graphql_url
+                      , json=data, headers=headers)
+
+    if not r.json()['data']['deleteRecipe']:
+        return jsonify({ 'errors':  r.json()['data']['errors'] })
+    
+    return r.json()['data']['deleteRecipe']
+
+
+@app.route("/get-user-recipes", methods=["POST"])
+def get_user_recipes():
+    if not request.json: 
+        abort(400)
+    
+    query = """
+        query GetRecipesByUser($userId: ID!) {
+            getRecipesByUser(userId: $userId) {
+                id
+                name
+                link
+                createdAt
+            }
+        }
+    """
+
+    data = { "query": query, "variables": request.json }
+    headers = {"Content-Type": "application/json"}
+
+    r = requests.post(graphql_url
+                      , json=data, headers=headers)
+
+    if not r.json()['data']['getRecipesByUser'] and r.json()['data']['getRecipesByUser'] != []:
+        return jsonify({ 'errors':  r.json()['errors'] })
+    
+    return r.json()['data']['getRecipesByUser']
+
+
+@app.route("/get-user-ingredients", methods=["POST"])
+def get_user_ingredients():
+    if not request.json: 
+        abort(400)
+    
+    query = """
+        query GetIngredientsByUser($userId: ID!) {
+            getIngredientsByUser(userId: $userId) {
+                name
+            }
+        }
+    """
+
+    data = { "query": query, "variables": request.json }
+    headers = {"Content-Type": "application/json"}
+
+    r = requests.post(graphql_url
+                      , json=data, headers=headers)
+
+    if not r.json()['data']['getIngredientsByUser'] and r.json()['data']['getIngredientsByUser'] != []:
+        return jsonify({ 'errors':  r.json()['errors'] })
+    
+    return r.json()['data']['getIngredientsByUser']
+
+
+@app.route("/update-user-ingredients", methods=["POST"])
+def update_user_ingredients():
+    if not request.json: 
+        abort(400)
+    
+    query = """
+        mutation EditUserIngredients($editUserIngredientsInput: EditUserIngredientsInput) {
+            editUserIngredients(editUserIngredientsInput: $editUserIngredientsInput) {
+                name
+            }
+        }
+    """
+
+    variables = { "editUserIngredientsInput": request.json }
+    data = { "query": query, "variables": variables }
+    headers = {"Content-Type": "application/json"}
+
+    r = requests.post(graphql_url
+                      , json=data, headers=headers)
+    
+    if not r.json()['data']['editUserIngredients'] and r.json()['data']['editUserIngredients'] != []:
+        return jsonify({ 'errors':  r.json()['errors'] })
+    
+    return r.json()['data']['editUserIngredients']
 
 
 @app.route("/register", methods=["POST"])
@@ -47,7 +198,7 @@ def register_user():
     data = { "query": query, "variables": variables }
     headers = {"Content-Type": "application/json"}
 
-    r = requests.post(database_url
+    r = requests.post(graphql_url
                       , json=data, headers=headers)
 
     if not r.json()['data']['registerUser']:
@@ -71,12 +222,12 @@ def login_user():
             }
         }
     """
-
+    print(request.json)
     variables = { 'loginInput': request.json }
     data = { "query": query, "variables": variables }
     headers = {"Content-Type": "application/json"}
     
-    r = requests.post(database_url, json=data, headers=headers)
+    r = requests.post(graphql_url, json=data, headers=headers)
 
     if not r.json()['data']['loginUser']:
         return jsonify({ 'errors':  r.json()['errors'] })
