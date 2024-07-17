@@ -11,7 +11,7 @@ def completionPrompt2():
 
     # I will generate a named, bulleted list of all ingredients for each recipe according to the desired format below (recipe_list).
 
-    # I will add  each recipe's <link_to_recipe> below its list.
+    # I will add each recipe's <link_to_recipe> below its list.
 
     # Finally, I will compile a grocery list of all previously listed 
     # ingredients from found recipes at the end according to grocery_list format.
@@ -35,7 +35,7 @@ def completionPrompt2():
     
     {if <meals> includes 'breakfast' then #### Breakfast
     
-    ##### Recipe: [<breakfast recipe name>](allrecipes_url) - <number_of_servings> servings
+    ##### Recipe: [<breakfast recipe name>](link_to_recipe) - <number_of_servings> servings
     - list
     - of 
     - ingredients
@@ -44,7 +44,7 @@ def completionPrompt2():
     
     {if <meals> includes 'lunch' then #### Lunch
     
-    ##### Recipe: [<lunch recipe name>](allrecipes_url) - <number_of_servings> servings
+    ##### Recipe: [<lunch recipe name>](link_to_recipe) - <number_of_servings> servings
     - list
     - of 
     - ingredients
@@ -53,7 +53,7 @@ def completionPrompt2():
 
     {if <meals> includes 'dinner' then #### Dinner
     
-    ##### Recipe: [<dinner recipe name>](allrecipes_url) - <number_of_servings> servings
+    ##### Recipe: [<dinner recipe name>](link_to_recipe) - <number_of_servings> servings
     - list
     - of 
     - ingredients

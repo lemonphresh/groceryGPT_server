@@ -240,8 +240,8 @@ def create_chat_completion():
     if not request.json or not "prompt" in request.json:
         abort(400)
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
+        model="gpt-4o",
+         messages=[
             { "role": "system", "content": completionPrompt2() },
             { "role": "user", "content": request.json["prompt"] },
         ],
